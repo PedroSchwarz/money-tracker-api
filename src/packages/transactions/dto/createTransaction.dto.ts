@@ -1,3 +1,5 @@
+import { Date } from 'mongoose';
+
 export type CreateTransactionDTO = {
   title: string;
   description?: string;
@@ -5,4 +7,5 @@ export type CreateTransactionDTO = {
   type: string;
   recurring?: boolean;
   user: string;
+  updatedAt?: Date;
 };

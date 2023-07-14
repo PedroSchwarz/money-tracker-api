@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { Date, HydratedDocument } from 'mongoose';
 import { User } from 'src/packages/users/model/user.schema';
 
 export type TransactionDocument = HydratedDocument<Transaction>;
@@ -18,6 +18,10 @@ export class Transaction {
   recurring: boolean;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: User;
+  @Prop({ default: Date.now() })
+  createdAt: Date;
+  @Prop({ default: Date.now() })
+  updatedAt: Date;
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
