@@ -1,4 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+  ConflictException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from 'src/packages/users/service/users.service';
@@ -16,10 +23,7 @@ export class AuthService {
     const foundUser = await this.userService.findByEmail(signUpDTO.email);
 
     if (foundUser) {
-      return {
-        message: 'User already registered',
-        statusCode: 500,
-      };
+      throw new ConflictException();
     }
 
     try {
@@ -38,10 +42,10 @@ export class AuthService {
         email: result.email,
       };
     } catch {
-      return {
-        message: "Couldn't create user",
-        statusCode: 500,
-      };
+      throw new HttpException(
+        'Error registering account',
+        HttpStatus.BAD_GATEWAY,
+      );
     }
   }
 
@@ -49,7 +53,7 @@ export class AuthService {
     const user = await this.userService.findByEmail(signInDTO.email);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new NotFoundException();
     }
 
     if ((await bcrypt.compare(signInDTO.password, user.password)) == false) {

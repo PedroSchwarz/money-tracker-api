@@ -18,9 +18,9 @@ export class Transaction {
   recurring: boolean;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: User;
-  @Prop({ default: Date.now() })
+  @Prop({ type: Date, default: Date.now() })
   createdAt: Date;
-  @Prop({ default: Date.now() })
+  @Prop({ type: Date, default: Date.now() })
   updatedAt: Date;
 }
 
