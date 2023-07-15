@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import {
   AuthenticatedRequest,
 } from 'src/packages/auth/guard/auth.guard';
 import { CreateTransactionDTO } from '../dto/createTransaction.dto';
+import { FindTransactionDTO } from '../dto/findTransactions.dto';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -19,8 +21,8 @@ export class TransactionsController {
 
   @UseGuards(AuthGuard)
   @Get('/')
-  getAllTransactions() {
-    return this.transactionsService.findAll();
+  getAllTransactions(@Query() query: FindTransactionDTO) {
+    return this.transactionsService.findAllByDate(query.date);
   }
 
   @UseGuards(AuthGuard)
@@ -34,5 +36,17 @@ export class TransactionsController {
       ...createTransactionDTO,
       user: user.sub,
     });
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/total')
+  getTotalAmount() {
+    return this.transactionsService.getAmountSum();
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/total/date')
+  getTotalAmountByDate(@Query() query: FindTransactionDTO) {
+    return this.transactionsService.getAmountSumByDate(query.date);
   }
 }

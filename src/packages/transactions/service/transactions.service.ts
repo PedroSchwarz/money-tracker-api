@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Transaction } from '../model/transaction.schema';
 import { Model } from 'mongoose';
 import { CreateTransactionDTO } from '../dto/createTransaction.dto';
+import { mapStringToDate } from '../helpers/date.helpers';
 
 @Injectable()
 export class TransactionsService {
@@ -17,14 +18,42 @@ export class TransactionsService {
       );
       return await createdTransaction.save();
     } catch (e: any) {
-      return {
-        statusCode: 500,
-        message: "Couldn't create user",
-      };
+      throw new HttpException(
+        'Erro creating transaction. Try again later.',
+        HttpStatus.BAD_GATEWAY,
+      );
     }
   }
 
-  async findAll(): Promise<Transaction[]> {
-    return await this.transactionModel.find();
+  async findAllByDate(from: string): Promise<Transaction[]> {
+    return await this.transactionModel
+      .find({
+        createdAt: {
+          $gte: mapStringToDate(from),
+          $lt: mapStringToDate(from, true),
+        },
+      })
+      .populate('user')
+      .exec();
+  }
+
+  async getAmountSumByDate(from: string): Promise<any> {
+    return await this.transactionModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: mapStringToDate(from),
+            $lt: mapStringToDate(from, true),
+          },
+        },
+      },
+      { $group: { _id: null, amount: { $sum: '$amount' } } },
+    ]);
+  }
+
+  async getAmountSum(): Promise<any> {
+    return await this.transactionModel.aggregate([
+      { $group: { _id: null, amount: { $sum: '$amount' } } },
+    ]);
   }
 }
