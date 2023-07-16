@@ -41,7 +41,7 @@ export class TransactionsService {
   }
 
   async getAmountSumByDate(from: string): Promise<any> {
-    return await this.transactionModel.aggregate([
+    const results = await this.transactionModel.aggregate([
       {
         $match: {
           createdAt: {
@@ -52,11 +52,13 @@ export class TransactionsService {
       },
       { $group: { _id: null, amount: { $sum: '$amount' } } },
     ]);
+    return results.at(0) ?? { amount: 0 };
   }
 
   async getAmountSum(): Promise<any> {
-    return await this.transactionModel.aggregate([
+    const results = await this.transactionModel.aggregate([
       { $group: { _id: null, amount: { $sum: '$amount' } } },
     ]);
+    return results.at(0) ?? { amount: 0 };
   }
 }
