@@ -4,6 +4,7 @@ import { Transaction } from '../model/transaction.schema';
 import { Model } from 'mongoose';
 import { CreateTransactionDTO } from '../dto/createTransaction.dto';
 import { mapStringToDate } from '../helpers/date.helpers';
+import { TransactionsByDateDTO } from '../dto/transactionsByDate.dto';
 
 @Injectable()
 export class TransactionsService {
@@ -25,8 +26,8 @@ export class TransactionsService {
     }
   }
 
-  async findAllByDate(from: string): Promise<Transaction[]> {
-    return await this.transactionModel
+  async findAllByDate(from: string): Promise<TransactionsByDateDTO> {
+    const transactions = await this.transactionModel
       .find({
         createdAt: {
           $gte: mapStringToDate(from),
@@ -35,6 +36,8 @@ export class TransactionsService {
       })
       .populate('user')
       .exec();
+
+    return { data: transactions };
   }
 
   async getAmountSumByDate(from: string): Promise<any> {
