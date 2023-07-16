@@ -42,6 +42,7 @@ export class TransactionsService {
 
   async findAndGroupAllByDate(from: string): Promise<any> {
     const transactions = await this.transactionModel.aggregate([
+      /// Match field with filter
       {
         $match: {
           createdAt: {
@@ -50,6 +51,7 @@ export class TransactionsService {
           },
         },
       },
+      /// Populate document field with users table matching local and foreign fields
       {
         $lookup: {
           from: 'users',
@@ -58,6 +60,9 @@ export class TransactionsService {
           as: 'user',
         },
       },
+      /// Lookup returns an array. Unwind returns one element
+      { $unwind: '$user' },
+      /// Returns new array with grouping. _id is the field. Push adds the corresponding document to new array. Root is the whole document.
       { $group: { _id: '$type', transactions: { $push: '$$ROOT' } } },
     ]);
 
