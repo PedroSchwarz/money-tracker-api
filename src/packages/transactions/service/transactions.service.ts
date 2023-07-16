@@ -40,6 +40,30 @@ export class TransactionsService {
     return { data: transactions };
   }
 
+  async findAndGroupAllByDate(from: string): Promise<any> {
+    const transactions = await this.transactionModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: mapStringToDate(from),
+            $lt: mapStringToDate(from, true),
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      { $group: { _id: '$type', transactions: { $push: '$$ROOT' } } },
+    ]);
+
+    return { data: transactions };
+  }
+
   async getAmountSumByDate(from: string): Promise<any> {
     const results = await this.transactionModel.aggregate([
       {

@@ -22,7 +22,7 @@ export class TransactionsController {
   @UseGuards(AuthGuard)
   @Get('/')
   getAllTransactions(@Query() query: FindTransactionDTO) {
-    return this.transactionsService.findAllByDate(query.date);
+    return this.transactionsService.findAndGroupAllByDate(query.date);
   }
 
   @UseGuards(AuthGuard)
