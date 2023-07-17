@@ -34,6 +34,7 @@ export class TransactionsService {
           $lt: mapStringToDate(from, true),
         },
       })
+      .sort({ createdAt: 1 })
       .populate('user')
       .exec();
 
@@ -63,7 +64,14 @@ export class TransactionsService {
       /// Lookup returns an array. Unwind returns one element
       { $unwind: '$user' },
       /// Returns new array with grouping. _id is the field. Push adds the corresponding document to new array. Root is the whole document.
-      { $group: { _id: '$type', transactions: { $push: '$$ROOT' } } },
+      {
+        $group: {
+          _id: '$type',
+          total: { $sum: '$amount' },
+          transactions: { $push: '$$ROOT' },
+        },
+      },
+      { $sort: { total: 1 } },
     ]);
 
     return { data: transactions };
