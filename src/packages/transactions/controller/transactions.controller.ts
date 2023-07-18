@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Query,
   Request,
@@ -14,6 +16,7 @@ import {
 } from 'src/packages/auth/guard/auth.guard';
 import { CreateTransactionDTO } from '../dto/createTransaction.dto';
 import { FindTransactionDTO } from '../dto/findTransactions.dto';
+import { DeleteTransactionDTO } from '../dto/deleteTransaction.dto';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -48,5 +51,17 @@ export class TransactionsController {
   @Get('/total/date')
   getTotalAmountByDate(@Query() query: FindTransactionDTO) {
     return this.transactionsService.getAmountSumByDate(query.date);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/recurring')
+  getRecurringTransactions() {
+    return this.transactionsService.fetchAllRecurringTransactions();
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  deleteTransaction(@Param() params: DeleteTransactionDTO) {
+    return this.transactionsService.deleteTransaction(params.id);
   }
 }

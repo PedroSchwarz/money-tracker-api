@@ -98,4 +98,15 @@ export class TransactionsService {
     ]);
     return results.at(0) ?? { amount: 0 };
   }
+
+  async fetchAllRecurringTransactions(): Promise<any> {
+    const transactions = await this.transactionModel.find({
+      recurring: true,
+    });
+    return { data: transactions };
+  }
+
+  async deleteTransaction(id: string): Promise<any> {
+    return await this.transactionModel.findByIdAndDelete(id);
+  }
 }
