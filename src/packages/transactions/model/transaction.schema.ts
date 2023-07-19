@@ -14,8 +14,8 @@ export class Transaction {
   amount: number;
   @Prop({ required: true })
   type: string;
-  @Prop({ required: true, default: false })
-  recurring: boolean;
+  @Prop({ required: true })
+  recurring: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: User;
   @Prop({ type: Date, default: Date.now() })

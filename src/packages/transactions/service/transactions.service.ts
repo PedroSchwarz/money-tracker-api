@@ -99,9 +99,9 @@ export class TransactionsService {
     return results.at(0) ?? { amount: 0 };
   }
 
-  async fetchAllRecurringTransactions(): Promise<any> {
+  async fetchAllRecurringTransactions(type: string): Promise<any> {
     const transactions = await this.transactionModel.find({
-      recurring: true,
+      recurring: type,
     });
     return { data: transactions };
   }

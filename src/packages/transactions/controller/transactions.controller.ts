@@ -17,6 +17,7 @@ import {
 import { CreateTransactionDTO } from '../dto/createTransaction.dto';
 import { FindTransactionDTO } from '../dto/findTransactions.dto';
 import { DeleteTransactionDTO } from '../dto/deleteTransaction.dto';
+import { FindRecurringTransactionsDTO } from '../dto/findRecurringTransactions.dto';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -55,8 +56,8 @@ export class TransactionsController {
 
   @UseGuards(AuthGuard)
   @Get('/recurring')
-  getRecurringTransactions() {
-    return this.transactionsService.fetchAllRecurringTransactions();
+  getRecurringTransactions(@Query() query: FindRecurringTransactionsDTO) {
+    return this.transactionsService.fetchAllRecurringTransactions(query.type);
   }
 
   @UseGuards(AuthGuard)
