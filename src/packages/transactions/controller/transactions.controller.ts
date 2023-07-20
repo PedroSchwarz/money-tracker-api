@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -18,6 +19,7 @@ import { CreateTransactionDTO } from '../dto/createTransaction.dto';
 import { FindTransactionDTO } from '../dto/findTransactions.dto';
 import { DeleteTransactionDTO } from '../dto/deleteTransaction.dto';
 import { FindRecurringTransactionsDTO } from '../dto/findRecurringTransactions.dto';
+import { UpdateTransactionDTO } from '../dto/updateTransaction.dto';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -31,7 +33,7 @@ export class TransactionsController {
 
   @UseGuards(AuthGuard)
   @Post('/')
-  createTransactions(
+  createTransaction(
     @Request() req: AuthenticatedRequest,
     @Body() createTransactionDTO: CreateTransactionDTO,
   ) {
@@ -40,6 +42,12 @@ export class TransactionsController {
       ...createTransactionDTO,
       user: user.sub,
     });
+  }
+
+  @UseGuards(AuthGuard)
+  @Put('/')
+  updateTransaction(@Body() updateTransactionDTO: UpdateTransactionDTO) {
+    return this.transactionsService.update(updateTransactionDTO);
   }
 
   @UseGuards(AuthGuard)
@@ -52,12 +60,6 @@ export class TransactionsController {
   @Get('/total/date')
   getTotalAmountByDate(@Query() query: FindTransactionDTO) {
     return this.transactionsService.getAmountSumByDate(query.date);
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('/recurring')
-  getRecurringTransactions(@Query() query: FindRecurringTransactionsDTO) {
-    return this.transactionsService.fetchAllRecurringTransactions(query.type);
   }
 
   @UseGuards(AuthGuard)
