@@ -6,7 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
-@WebSocketGateway({ namespace: 'transactions', cors: { origin: '*' } })
+@WebSocketGateway({ namespace: 'transactions-events', cors: { origin: '*' } })
 export class TransactionsEventsGateway {
   @WebSocketServer()
   server: Server;
