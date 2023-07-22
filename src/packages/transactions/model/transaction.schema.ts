@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Date, HydratedDocument } from 'mongoose';
 import { User } from 'src/packages/users/model/user.schema';
+import { brazilTimeZone } from '../helpers/date.helpers';
 
 export type TransactionDocument = HydratedDocument<Transaction>;
 
@@ -22,9 +23,9 @@ export class Transaction {
   original: boolean;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: User;
-  @Prop({ type: Date, default: Date.now() })
+  @Prop({ type: Date, default: brazilTimeZone() })
   createdAt: Date;
-  @Prop({ type: Date, default: Date.now() })
+  @Prop({ type: Date, default: brazilTimeZone() })
   updatedAt: Date;
 }
 

@@ -3,16 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Transaction } from '../model/transaction.schema';
 import { Model } from 'mongoose';
 import { CreateTransactionDTO } from '../dto/createTransaction.dto';
-import { mapStringToDate } from '../helpers/date.helpers';
+import { brazilTimeZone, mapStringToDate } from '../helpers/date.helpers';
 import { TransactionsByDateDTO } from '../dto/transactionsByDate.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { RecurringTransactionDTO } from '../dto/recurringTransaction.dto';
 import { UpdateTransactionDTO } from '../dto/updateTransaction.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     @InjectModel(Transaction.name) private transactionModel: Model<Transaction>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async create(createTransactionDTO: CreateTransactionDTO): Promise<any> {
@@ -21,6 +23,7 @@ export class TransactionsService {
         ...createTransactionDTO,
         updatedAmount: createTransactionDTO.amount,
       });
+      // this.eventEmitter.emit('list.update');
       return await createdTransaction.save();
     } catch (e: any) {
       throw new HttpException(
@@ -44,7 +47,7 @@ export class TransactionsService {
           recurring,
           user,
         },
-        { ...data, updatedAmount: data.amount, updatedAt: Date.now() },
+        { ...data, updatedAmount: data.amount, updatedAt: brazilTimeZone() },
       );
     } else {
       if (updateOriginal) {
@@ -60,13 +63,13 @@ export class TransactionsService {
         });
         await this.transactionModel.findByIdAndUpdate(originalTransaction.id, {
           updatedAmount: data.amount,
-          updatedAt: Date.now(),
+          updatedAt: brazilTimeZone(),
         });
       }
       await this.transactionModel.findByIdAndUpdate(id, {
         ...data,
         updatedAmount: data.amount,
-        updatedAt: Date.now(),
+        updatedAt: brazilTimeZone(),
       });
     }
   }
