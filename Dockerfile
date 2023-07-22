@@ -1,15 +1,23 @@
-FROM node:20-alpine3.17
+# Build
+FROM node:20-alpine3.17 AS build
 WORKDIR /usr/src/app
 
 # A wildcard ensures package.json AND package-lock.json are copied
 COPY package*.json ./
 
 # Install project dependencies
-RUN npm install
+RUN npm ci
 
 COPY . .
 
-RUN npm run build
+RUN npm run build && npm prune --production
+
+# Production
+FROM node:20-alpine3.17 AS production
+WORKDIR /usr/src/app
+
+COPY  --from=build usr/src/app/dist ./dist
+COPY  --from=build usr/src/app/node_modules ./node_modules
 
 EXPOSE 3000/tcp
 
