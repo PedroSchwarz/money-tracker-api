@@ -8,24 +8,24 @@ import { TransactionsByDateDTO } from '../dto/transactionsByDate.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { RecurringTransactionDTO } from '../dto/recurringTransaction.dto';
 import { UpdateTransactionDTO } from '../dto/updateTransaction.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     @InjectModel(Transaction.name) private transactionModel: Model<Transaction>,
-    private eventEmitter: EventEmitter2,
   ) {}
 
-  async create(createTransactionDTO: CreateTransactionDTO): Promise<any> {
+  async create(
+    createTransactionDTO: CreateTransactionDTO,
+  ): Promise<Transaction> {
     try {
       const createdTransaction = new this.transactionModel({
         ...createTransactionDTO,
         updatedAmount: createTransactionDTO.amount,
       });
-      // this.eventEmitter.emit('list.update');
       return await createdTransaction.save();
     } catch (e: any) {
+      console.log(e);
       throw new HttpException(
         'Erro creating transaction. Try again later.',
         HttpStatus.BAD_GATEWAY,
@@ -33,7 +33,9 @@ export class TransactionsService {
     }
   }
 
-  async update(updateTransactionDTO: UpdateTransactionDTO): Promise<any> {
+  async update(
+    updateTransactionDTO: UpdateTransactionDTO,
+  ): Promise<Transaction> {
     const { id, cascade, updateOriginal, ...data } = updateTransactionDTO;
     if (cascade) {
       const { title, description, type, recurring, user } =
@@ -61,12 +63,16 @@ export class TransactionsService {
           user: user,
           original: true,
         });
-        await this.transactionModel.findByIdAndUpdate(originalTransaction.id, {
-          updatedAmount: data.amount,
-          updatedAt: brazilTimeZone(),
-        });
+        await this.transactionModel.findByIdAndUpdate(
+          originalTransaction.id,
+          {
+            updatedAmount: data.amount,
+            updatedAt: brazilTimeZone(),
+          },
+          { new: true },
+        );
       }
-      await this.transactionModel.findByIdAndUpdate(id, {
+      return await this.transactionModel.findByIdAndUpdate(id, {
         ...data,
         updatedAmount: data.amount,
         updatedAt: brazilTimeZone(),
