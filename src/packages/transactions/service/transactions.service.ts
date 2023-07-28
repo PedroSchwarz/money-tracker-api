@@ -25,7 +25,6 @@ export class TransactionsService {
       });
       return await createdTransaction.save();
     } catch (e: any) {
-      console.log(e);
       throw new HttpException(
         'Erro creating transaction. Try again later.',
         HttpStatus.BAD_GATEWAY,
