@@ -1,5 +1,5 @@
 # Build
-FROM node:20-alpine3.17 AS build
+FROM node:18-alpine AS build
 WORKDIR /usr/src/app
 
 # A wildcard ensures package.json AND package-lock.json are copied
@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build && npm prune --production
 
 # Production
-FROM node:20-alpine3.17 AS production
+FROM node:18-alpine AS production
 WORKDIR /usr/src/app
 
 COPY  --from=build usr/src/app/dist ./dist
