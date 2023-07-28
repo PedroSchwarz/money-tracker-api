@@ -5,11 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TransactionsModule } from './packages/transactions/transactions.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventsModule } from './packages/events/events.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
