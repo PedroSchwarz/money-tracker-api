@@ -1,21 +1,16 @@
-import { DateTime } from 'luxon';
-
 export const mapStringToDate = (from: string, endDate = false): Date => {
   const dates = from.split('-').map((date) => Number(date));
-  const date = DateTime.fromObject({
-    day: endDate ? dates[2] + 1 : dates[2],
-    month: dates[1],
-    year: dates[0],
-    hour: 0,
-  }).minus({ hours: 3 });
-  /// .minus({ hours: 3 })
-  /// Australia .plus({ hours: 10 })
-  return date.toJSDate();
+  const date = new Date(
+    dates[0],
+    dates[1] - 1,
+    endDate ? dates[2] + 1 : dates[2],
+  );
+  date.setHours(date.getHours() - 3);
+  return date;
 };
 
 export const brazilTimeZone = (): Date => {
-  const brazilTimeZone = DateTime.now().minus({ hours: 3 });
-  /// .minus({ hours: 3 })
-  /// Australia .plus({ hours: 10 })
-  return brazilTimeZone.toJSDate();
+  const date = new Date();
+  date.setHours(date.getHours() - 3);
+  return date;
 };
