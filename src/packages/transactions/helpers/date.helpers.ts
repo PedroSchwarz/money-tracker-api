@@ -7,14 +7,14 @@ export const mapStringToDate = (from: string, endDate = false): Date => {
     month: dates[1],
     year: dates[0],
     hour: 0,
-  }).minus({ hours: 2 });
+  }).minus({ hours: 2, minutes: 50 });
   /// .minus({ hours: 3 })
   /// Australia .plus({ hours: 10 })
   return date.toJSDate();
 };
 
 export const brazilTimeZone = (): Date => {
-  const brazilTimeZone = DateTime.now().minus({ hours: 2 });
+  const brazilTimeZone = DateTime.now().minus({ hours: 2, minutes: 50 });
   /// .minus({ hours: 3 })
   /// Australia .plus({ hours: 10 })
   return brazilTimeZone.toJSDate();
