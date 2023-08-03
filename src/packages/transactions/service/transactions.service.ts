@@ -152,6 +152,21 @@ export class TransactionsService {
     return results.at(0) ?? { amount: 0 };
   }
 
+  async getTransactionsDates(): Promise<any> {
+    const groups = await this.transactionModel.aggregate([
+      {
+        $group: {
+          _id: {
+            $dateTrunc: { date: '$createdAt', unit: 'day' },
+          },
+          size: { $sum: 1 },
+        },
+      },
+    ]);
+
+    return groups;
+  }
+
   async deleteTransaction(id: string): Promise<any> {
     return await this.transactionModel.findByIdAndDelete(id);
   }

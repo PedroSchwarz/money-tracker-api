@@ -96,4 +96,10 @@ export class TransactionsController {
   deleteTransaction(@Param() params: DeleteTransactionDTO) {
     return this.transactionsService.deleteTransaction(params.id);
   }
+
+  @UseGuards(AuthGuard)
+  @Get('/dates')
+  getTransactionsDates() {
+    return this.transactionsService.getTransactionsDates();
+  }
 }
