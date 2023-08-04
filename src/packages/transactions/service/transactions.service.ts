@@ -164,7 +164,7 @@ export class TransactionsService {
       },
     ]);
 
-    return groups;
+    return { data: groups };
   }
 
   async deleteTransaction(id: string): Promise<any> {
